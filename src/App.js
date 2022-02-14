@@ -14,20 +14,26 @@ function App() {
   const [guessCol, setGuessCol] = useState(0)
   const [allGuesses, setAllGuesses] = useState([[], [], [], [], []])
   const [showLink, setShowLink] = useState(false)
+  const [alphabetHasBeenGuessed, setAlphabetHasBeenGuessed] = useState({})
 
   useEffect(()=> {
     function fetchWord() {
       fetch(apiUrl).then(res => res.json()).then(res => {
         console.log(res)
         let wordDictionary = {}
+        let alphabetDictionary = {}
         for (let i=0; i<5; i++) {
           if (!wordDictionary[res.word[i]]) {
             wordDictionary[res.word[i]] = [i]
           } else {
             wordDictionary[res.word[i]] = [ ...wordDictionary[res.word[i]], i]
           }
+          if (!alphabetHasBeenGuessed[res.word[i]]) {
+            wordDictionary[res.word[i]] = 'not guessed'
+          }
         }
         setRandomWord(wordDictionary)
+        setAlphabetHasBeenGuessed(alphabetDictionary)
         setSimpleWord(res.word)
       })
     }
@@ -75,7 +81,7 @@ function App() {
   function makeAlphabet() {
     const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     return (<ul className="Alphabet">
-      {letters.map((letter)=><li onClick={handleChooseLetter} className='Letter' key={letter}>{letter}</li>)}
+      {letters.map((letter)=><li onClick={handleChooseLetter} className='Letter' value={letter} key={letter}>{letter}</li>)}
     </ul>)
   }
 
@@ -93,8 +99,21 @@ function handleChooseWord () {
   currentChoice.forEach((letter, index) => {
     if (randomWord[letter] && randomWord[letter].includes(index)) {
       console.log('got it spot on ,', letter, 'at index ', index)
+      // if spot on need to update alphabet to green at that letter
+      let alphabetCopy = alphabetHasBeenGuessed
+      alphabetCopy[letter] = 'green'
+      setAlphabetHasBeenGuessed(alphabetCopy)
       countCorrect++
     } else if (randomWord[letter]) {
+      // if in dictionary but wrong spot need to update alphabet to yellow at that letter
+      console.log('in a letter chosen')
+      if (setAlphabetHasBeenGuessed[letter] !== 'green') {
+        let alphabetCopy = alphabetHasBeenGuessed
+        alphabetCopy[letter] = 'yellow'
+        console.log('alphabetCopy', alphabetCopy)
+        console.log('setting to yellow')
+        setAlphabetHasBeenGuessed(alphabetCopy)
+      }
       console.log('yes ', letter, ' is in there but in the wrong spot')
     } else {
       console.log('nope ', letter, 'is not in there')
@@ -115,14 +134,12 @@ function handleChooseWord () {
     }
     setCurrentChoice([])
   }
-    
 }
 
 
   let cells = renderTableCells()
   let alphabet = makeAlphabet()
-  
-  let active = useRef(cells.props.children[0].props.children[0])
+
   return (
     <div className="App">
         {(!randomWord || !loadingDone) &&
@@ -140,7 +157,7 @@ function handleChooseWord () {
             {showChooseButton && <button onClick={handleChooseWord}>Submit</button>}
             {showLink && (
               <>
-              <a target="_blank" href={`https://www.merriam-webster.com/dictionary/${simpleWord}`}>{simpleWord}</a>
+                <a target="_blank" href={`https://www.merriam-webster.com/dictionary/${simpleWord}`}>{simpleWord}</a>
                 <a href="#">Reset</a>
               </>
             )}
