@@ -26,16 +26,16 @@ ul {
 .Alphabet {
   display: flex;
   flex-wrap: wrap;
-  margin: 0;
+  margin: 10px 15px;
+  justify-content: space-between;
   padding: 0;
 }
 .Letter {
-  width: 30px;
+  width: 50px;
   border: 2px solid white;
   font-size: 24px;
   color: white;
 }
-
 .Row {
   width: 100%;
   height: 80px;
