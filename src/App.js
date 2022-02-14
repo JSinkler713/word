@@ -1,23 +1,151 @@
+import { useState, useEffect, useRef } from "react"
 import logo from './logo.svg';
 import './App.css';
+import LetterBox from './LetterBox';
+const apiUrl = 'http://localhost:4000/five-letter'
 
 function App() {
+  const [randomWord, setRandomWord] = useState({})
+  const [simpleWord, setSimpleWord] = useState('')
+  const [loadingDone, setLoadingDone] = useState(false)
+  const [currentChoice, setCurrentChoice] = useState([])
+  const [showChooseButton, setShowChooseButton] = useState(false)
+  const [guessIndex, setGuessIndex] = useState(0)
+  const [guessCol, setGuessCol] = useState(0)
+  const [allGuesses, setAllGuesses] = useState([[], [], [], [], []])
+  const [showLink, setShowLink] = useState(false)
+
+  useEffect(()=> {
+    function fetchWord() {
+      fetch(apiUrl).then(res => res.json()).then(res => {
+        console.log(res)
+        let wordDictionary = {}
+        for (let i=0; i<5; i++) {
+          if (!wordDictionary[res.word[i]]) {
+            wordDictionary[res.word[i]] = [i]
+          } else {
+            wordDictionary[res.word[i]] = [ ...wordDictionary[res.word[i]], i]
+          }
+        }
+        setRandomWord(wordDictionary)
+        setSimpleWord(res.word)
+      })
+    }
+    fetchWord()
+  }, [])
+
+  useEffect(()=> {
+    function setRemainingLetters() {
+    }
+    if (randomWord) {
+      setRemainingLetters()
+    }
+  }, [randomWord])
+
+  useEffect(()=> {
+    let timeOut = setTimeout(()=> {
+      setLoadingDone(true)
+    }, 2500);
+    return ()=> {
+      clearTimeout(timeOut)
+    }
+  }, [])
+
+  useEffect(()=> {
+    if (currentChoice.length === 5) {
+      setShowChooseButton(true)
+    } else {
+      setShowChooseButton(false)
+    }
+  }, [currentChoice, setCurrentChoice])
+
+  function renderTableCells() {
+    let tableRows = new Array(5)
+    for (let i=0; i< tableRows.length; i++) {
+      tableRows[i] = (<ul className='Row' key={`row-${i}`}>
+        <LetterBox key='col-1' value={allGuesses[i][0]} className={i === guessIndex && 0 === guessCol ? 'Active Cell' : 'Cell'} realWord={randomWord} choiceMade={guessIndex > i ? true : false } colIndex={0} />
+        <LetterBox className={(i === guessIndex && 1 === guessCol ? 'Active Cell' : 'Cell')} key='col-2' value={allGuesses[i][1]} choiceMade={guessIndex > i ? true : false } realWord={randomWord} colIndex={1} />
+        <LetterBox className={(i === guessIndex && 2 === guessCol ? 'Active Cell' : 'Cell')} key='col-3' value={allGuesses[i][2]} realWord={randomWord} colIndex={2} choiceMade={guessIndex > i ? true : false } />
+        <LetterBox className={(i === guessIndex && 3 === guessCol ? 'Active Cell' : 'Cell')} key='col-4' value={allGuesses[i][3]} realWord={randomWord} colIndex={3} choiceMade={guessIndex > i ? true : false } />
+        <LetterBox className={(i === guessIndex && 4 === guessCol ? 'Active Cell' : 'Cell')} key='col-5' value={allGuesses[i][4]} realWord={randomWord} colIndex={4} choiceMade={guessIndex > i ? true : false } />
+      </ul>)
+    }
+    return <div className='Table'>{tableRows}</div>
+  }
+  function makeAlphabet() {
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    return (<ul className="Alphabet">
+      {letters.map((letter)=><li onClick={handleChooseLetter} className='Letter' key={letter}>{letter}</li>)}
+    </ul>)
+  }
+
+  function handleChooseLetter (e) {
+    setCurrentChoice([...currentChoice, e.target.innerText])
+    const allGuessesCopy = [...allGuesses]
+    allGuessesCopy[guessIndex][guessCol] = e.target.innerText
+    setAllGuesses(allGuessesCopy)
+    setGuessCol(guessCol + 1)
+  }
+
+function handleChooseWord () {
+  console.log('handling the choice')
+  let countCorrect = 0
+  currentChoice.forEach((letter, index) => {
+    if (randomWord[letter] && randomWord[letter].includes(index)) {
+      console.log('got it spot on ,', letter, 'at index ', index)
+      countCorrect++
+    } else if (randomWord[letter]) {
+      console.log('yes ', letter, ' is in there but in the wrong spot')
+    } else {
+      console.log('nope ', letter, 'is not in there')
+      // increase index
+      setGuessIndex(guessIndex + 1)
+    }
+  })
+  setGuessCol(0)
+
+  if (countCorrect === 5) {
+    console.log('correct guess')
+  } else {
+    console.log('not guessed right yet')
+    // set this row of choices, move to next row
+    if (guessIndex === 4) {
+      console.log('game over')
+      setShowLink(true)
+    }
+    setCurrentChoice([])
+  }
+    
+}
+
+
+  let cells = renderTableCells()
+  let alphabet = makeAlphabet()
+  
+  let active = useRef(cells.props.children[0].props.children[0])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        {(!randomWord || !loadingDone) &&
+        <header className="App-header">
+          <h1>
+            Wordl
+          </h1>
+          <p>Guess the five letter wordl</p>
+        </header>
+        }
+        {(randomWord && loadingDone) && cells && alphabet &&
+          <div className='Game'>
+            {cells}
+            {alphabet}
+            {showChooseButton && <button onClick={handleChooseWord}>Submit</button>}
+            {showLink && (
+              <>
+              <a target="_blank" href={`https://www.merriam-webster.com/dictionary/${simpleWord}`}>{simpleWord}</a>
+                <a href="#">Reset</a>
+              </>
+            )}
+          </div>
+        }
     </div>
   );
 }
