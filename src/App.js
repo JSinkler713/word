@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react"
-import logo from './logo.svg';
+import { useState, useEffect } from "react"
 import './App.css';
 import LetterBox from './LetterBox';
+import { hashWordUtil, unHashUtil } from './hashWordUtil';
 const apiUrl = 'http://localhost:4000/five-letter'
+
 
 function App() {
   const [randomWord, setRandomWord] = useState({})
@@ -15,30 +16,71 @@ function App() {
   const [allGuesses, setAllGuesses] = useState([[], [], [], [], []])
   const [showLink, setShowLink] = useState(false)
   const [alphabetHasBeenGuessed, setAlphabetHasBeenGuessed] = useState({})
+  const [checkedForHash, setCheckedForHash] = useState(false)
+
+
+  function cleanWord(word) {
+    let wordDictionary = {}
+    let alphabetDictionary = {}
+    for (let i=0; i<5; i++) {
+      if (!wordDictionary[word[i]]) {
+        wordDictionary[word[i]] = [i]
+      } else {
+        wordDictionary[word[i]] = [ ...wordDictionary[word[i]], i]
+      }
+      if (!alphabetHasBeenGuessed[word[i]]) {
+        alphabetDictionary[word[i]] = 'not guessed'
+      }
+    }
+    return [wordDictionary, alphabetDictionary]
+  }
+  useEffect(()=> {
+    let url = window.location.href
+    let scrambledArr = url.split('?')
+    let hashed;
+    let realWord;
+    if (scrambledArr.length === 2) {
+      hashed = scrambledArr[1]
+    }
+    //use hashed to get word
+    if (hashed) {
+      realWord = unHashUtil(hashed)
+      const [wordDictionary, alphabetDictionary] = cleanWord(realWord)
+      setRandomWord(wordDictionary)
+      setAlphabetHasBeenGuessed(alphabetDictionary)
+      setSimpleWord(realWord)
+    }
+    setCheckedForHash(true)
+  }, [])
 
   useEffect(()=> {
+    if (checkedForHash && !simpleWord) {
     function fetchWord() {
       fetch(apiUrl).then(res => res.json()).then(res => {
         console.log(res)
-        let wordDictionary = {}
-        let alphabetDictionary = {}
-        for (let i=0; i<5; i++) {
-          if (!wordDictionary[res.word[i]]) {
-            wordDictionary[res.word[i]] = [i]
-          } else {
-            wordDictionary[res.word[i]] = [ ...wordDictionary[res.word[i]], i]
-          }
-          if (!alphabetHasBeenGuessed[res.word[i]]) {
-            wordDictionary[res.word[i]] = 'not guessed'
-          }
-        }
+        const [wordDictionary, alphabetDictionary] = cleanWord(res.word)
         setRandomWord(wordDictionary)
         setAlphabetHasBeenGuessed(alphabetDictionary)
         setSimpleWord(res.word)
       })
     }
     fetchWord()
-  }, [])
+    }
+  }, [checkedForHash])
+
+  useEffect(()=> {
+    let hashedWord;
+    let rerehashed
+    if (simpleWord) {
+      console.log('***********************')
+      hashedWord = hashWordUtil(simpleWord)
+      console.log('hashed, ', hashedWord)
+      console.log('***********************')
+      rerehashed = unHashUtil(hashedWord)
+      console.log('unhashed, ', rerehashed)
+    }
+
+  }, [simpleWord])
 
   useEffect(()=> {
     function setRemainingLetters() {
@@ -125,6 +167,9 @@ function handleChooseWord () {
 
   if (countCorrect === 5) {
     console.log('correct guess')
+    console.log('game over')
+    setGuessIndex(guessIndex + 1)
+    setShowLink(true)
   } else {
     console.log('not guessed right yet')
     // set this row of choices, move to next row

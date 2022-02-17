@@ -17,8 +17,7 @@ root {
 .Game {
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
-  padding-top: 40px;
+  padding-top: 10px;
 }
 ul {
   list-style: none;
