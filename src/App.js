@@ -135,9 +135,25 @@ function App() {
     setGuessCol(guessCol + 1)
   }
 
-function handleChooseWord () {
+async function handleChooseWord () {
   console.log('handling the choice')
   let countCorrect = 0
+  //check is Word?
+  async function checkIsWord(word) {
+    let result = await fetch('http://localhost:4000/check-is-word', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ word: word}),
+    })
+    result = await result.json()
+    return result
+  }
+  
+  console.log('checking is word')
+  let returnValue = await checkIsWord(currentChoice.join(''))
+  console.log(returnValue)
   currentChoice.forEach((letter, index) => {
     if (randomWord[letter] && randomWord[letter].includes(index)) {
       console.log('got it spot on ,', letter, 'at index ', index)
