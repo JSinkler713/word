@@ -234,7 +234,7 @@ function Home() {
     setGuessCol(guessCol + 1);
   }
   async function checkIsWord(word) {
-    let result = await fetch(apiUrl + "check-is-word", {
+    let result = await fetch(apiUrl + "/check-is-word", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json",
