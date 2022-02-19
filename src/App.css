@@ -19,6 +19,18 @@ root {
   flex-direction: column;
   padding-top: 10px;
 }
+.ShowMeaning {
+  position: absolute;
+  top: 40px;
+}
+.ShowMeaning > h2 {
+  background: orange;
+  color: white;
+}
+.ShowMeaning > p {
+  background: orange;
+  color: white;
+}
 ul {
   list-style: none;
 }
