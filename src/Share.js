@@ -15,7 +15,7 @@ const Share = ({hash})=> {
     onClick={handleCopy}
 >
   Or Share
-          {success ?
+          {success &&
           <div className="SharedSuccess">Copied to clipboard, send to a friend</div>
           }
 </button>
