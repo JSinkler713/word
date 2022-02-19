@@ -1,5 +1,5 @@
 import React, {useState, useEffect, createRef, useContext} from 'react'; 
-const deployedURL = process.env.REACT_APP_DEPLOYED_URL || "http://localhost:4000";
+const deployedURL = process.env.REACT_APP_DEPLOYED_URL || "http://localhost:3000";
  
 const Share = ({hash})=> { 
   const [success, setSuccess] = useState(false)

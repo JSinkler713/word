@@ -24,6 +24,28 @@ function Home() {
   const [choiceCopy, setChoiceCopy] = useState("");
   const [isDone, setIsDone] = useState(false);
   const [hashed, setHashed] = useState("");
+  const [doReset, setDoReset] = useState(true)
+
+  function reset() {
+    setRandomWord({});
+    setSimpleWord("");
+    setLoadingDone(false);
+    setCurrentChoice([]);
+    setShowChooseButton(false);
+    setGuessIndex(0);
+    setGuessCol(0);
+    setAllGuesses([[], [], [], [], []]);
+    setShowLink(false);
+    setAlphabetHasBeenGuessed({});
+    setCheckedForHash(false);
+    setMeaning("");
+    setIsWord("");
+    setShowGuess(false);
+    setChoiceCopy("");
+    setIsDone(false);
+    setHashed("");
+    setDoReset(true)
+  }
 
   function cleanWord(word) {
     let wordDictionary = {};
@@ -41,24 +63,27 @@ function Home() {
     return [wordDictionary, alphabetDictionary];
   }
   useEffect(() => {
-    let url = window.location.href;
-    let scrambledArr = url.split("?");
-    let hashedWord;
-    let realWord;
-    if (scrambledArr.length === 2) {
-      hashedWord = scrambledArr[1];
+    if (doReset === true) {
+      let url = window.location.href;
+      let scrambledArr = url.split("?");
+      let hashedWord;
+      let realWord;
+      if (scrambledArr.length === 2) {
+        hashedWord = scrambledArr[1];
+      }
+      //use hashed to get word
+      if (hashedWord) {
+        realWord = unHashUtil(hashedWord);
+        setHashed(hashedWord);
+        const [wordDictionary, alphabetDictionary] = cleanWord(realWord);
+        setRandomWord(wordDictionary);
+        setAlphabetHasBeenGuessed(alphabetDictionary);
+        setSimpleWord(realWord);
+      }
+      setCheckedForHash(true);
     }
-    //use hashed to get word
-    if (hashedWord) {
-      realWord = unHashUtil(hashedWord);
-      setHashed(hashedWord);
-      const [wordDictionary, alphabetDictionary] = cleanWord(realWord);
-      setRandomWord(wordDictionary);
-      setAlphabetHasBeenGuessed(alphabetDictionary);
-      setSimpleWord(realWord);
-    }
-    setCheckedForHash(true);
-  }, []);
+    setDoReset(false)
+  }, [reset]);
 
   useEffect(() => {
     if (guessIndex === 5) {
@@ -105,13 +130,15 @@ function Home() {
   }, [randomWord]);
 
   useEffect(() => {
-    let timeOut = setTimeout(() => {
-      setLoadingDone(true);
-    }, 2500);
-    return () => {
-      clearTimeout(timeOut);
-    };
-  }, []);
+    if (!loadingDone) {
+      let timeOut = setTimeout(() => {
+        setLoadingDone(true);
+      }, 2500);
+      return () => {
+        clearTimeout(timeOut);
+      };
+    }
+  }, [loadingDone]);
 
   useEffect(() => {
     if (currentChoice.length === 5) {
@@ -342,7 +369,7 @@ function Home() {
               >
                 {simpleWord}
               </a>
-              <a href="#">Reset</a>
+              <button onClick={reset}>Reset</button>
       {isDone ? <Share hash={hashed} /> : null}
             </>
           )}
