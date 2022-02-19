@@ -4,7 +4,7 @@ const deployedURL = process.env.REACT_APP_DEPLOYED_URL || "http://localhost:4000
 const Share = ({hash})=> { 
   const [success, setSuccess] = useState(false)
 
-  handleCopy = ()=> {
+  const handleCopy = ()=> {
     navigator.clipboard.writeText(`deployedURL/?${hash}`)
     setSuccess(true)
   }
