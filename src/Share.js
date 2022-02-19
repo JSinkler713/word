@@ -5,7 +5,7 @@ const Share = ({hash})=> {
   const [success, setSuccess] = useState(false)
 
   const handleCopy = ()=> {
-    navigator.clipboard.writeText(`deployedURL/?${hash}`)
+    navigator.clipboard.writeText(`${deployedURL}/?${hash}`)
     setSuccess(true)
   }
 
