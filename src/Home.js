@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import LetterBox from "./LetterBox";
+import AlphabetLetter from "./AlphabetLetter";
 import { hashWordUtil, unHashUtil } from "./hashWordUtil";
 import ShowMeaning from "./ShowMeaning";
 import Share from "./Share";
@@ -240,14 +241,13 @@ function Home() {
     return (
       <ul className="Alphabet">
         {letters.map((letter) => (
-          <li
-            onClick={handleChooseLetter}
-            className="Letter"
+          <AlphabetLetter
+            handleChooseLetter={handleChooseLetter}
+            tableOfLetters={alphabetHasBeenGuessed}
             value={letter}
             key={letter}
-          >
-            {letter}
-          </li>
+            letter={letter}
+          />
         ))}
       </ul>
     );
