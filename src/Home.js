@@ -242,13 +242,17 @@ function Home() {
       <ul className="Alphabet">
         {letters.map((letter) => (
           <AlphabetLetter
-            handleChooseLetter={handleChooseLetter}
+            handleChooseLetter={!showChooseButton ? handleChooseLetter : ()=> {}}
+            allowChoice={!showChooseButton}
             tableOfLetters={alphabetHasBeenGuessed}
             value={letter}
             key={letter}
             letter={letter}
           />
         ))}
+        <li disabled={!showChooseButton ? true : false} className={showChooseButton ? 'Letter Submit' : 'Letter Submit Disabled'} onClick={showChooseButton ? handleChooseWord : ()=> {}}>[Submit]</li>
+        <li className='Letter Delete' onClick={handleDelete}>[Delete]</li>
+
       </ul>
     );
   }
@@ -259,6 +263,20 @@ function Home() {
     allGuessesCopy[guessIndex][guessCol] = e.target.innerText;
     setAllGuesses(allGuessesCopy);
     setGuessCol(guessCol + 1);
+  }
+  function handleDelete() {
+    // get last value
+    const allGuessesCopy = [...allGuesses];
+    // need to make sure we have done a guess
+    // need to resetCurrentChoice to remove last guess
+    const currentChoiceCopy = [...currentChoice];
+    if (guessCol - 1 >= 0) {
+      allGuessesCopy[guessIndex][guessCol-1] = '' // reset last choice to ''
+      currentChoiceCopy.pop() // remove last guess
+      setCurrentChoice(currentChoiceCopy)
+      setAllGuesses(allGuessesCopy);
+      setGuessCol(guessCol - 1);
+    }
   }
   async function checkIsWord(word) {
     let result = await fetch(apiUrl + "/check-is-word", {
@@ -358,9 +376,6 @@ function Home() {
         <div className="Game">
           {cells}
           {alphabet}
-          {showChooseButton && (
-            <button onClick={handleChooseWord}>Submit</button>
-          )}
           {showLink && (
             <>
               <a
@@ -369,7 +384,7 @@ function Home() {
               >
                 {simpleWord}
               </a>
-              <button onClick={reset}>Reset</button>
+              <button className='Reset' onClick={reset}>Reset</button>
       {isDone ? <Share hash={hashed} /> : null}
             </>
           )}
