@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./App.css";
 import LetterBox from "./LetterBox";
 import AlphabetLetter from "./AlphabetLetter";
@@ -26,6 +27,7 @@ function Home() {
   const [isDone, setIsDone] = useState(false);
   const [hashed, setHashed] = useState("");
   const [doReset, setDoReset] = useState(true)
+  let navigate = useNavigate()
 
   function reset() {
     setRandomWord({});
@@ -46,6 +48,7 @@ function Home() {
     setIsDone(false);
     setHashed("");
     setDoReset(true)
+    navigate('/')
   }
 
   function cleanWord(word) {
