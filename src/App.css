@@ -101,6 +101,10 @@ a {
   background: yellow;
   color: black;
 }
+.Dark-Gray {
+  background-color: #117b7b;
+  color: white;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

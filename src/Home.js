@@ -317,10 +317,10 @@ function Home() {
     setIsWord(returnValue.isWord);
     setShowGuess(true);
     currentChoice.forEach((letter, index) => {
+      let alphabetCopy = alphabetHasBeenGuessed;
       if (randomWord[letter] && randomWord[letter].includes(index)) {
         console.log("got it spot on ,", letter, "at index ", index);
         // if spot on need to update alphabet to green at that letter
-        let alphabetCopy = alphabetHasBeenGuessed;
         alphabetCopy[letter] = "green";
         setAlphabetHasBeenGuessed(alphabetCopy);
         countCorrect++;
@@ -328,7 +328,6 @@ function Home() {
         // if in dictionary but wrong spot need to update alphabet to yellow at that letter
         console.log("in a letter chosen");
         if (setAlphabetHasBeenGuessed[letter] !== "green") {
-          let alphabetCopy = alphabetHasBeenGuessed;
           alphabetCopy[letter] = "yellow";
           console.log("alphabetCopy", alphabetCopy);
           console.log("setting to yellow");
@@ -337,6 +336,7 @@ function Home() {
         console.log("yes ", letter, " is in there but in the wrong spot");
       } else {
         console.log("nope ", letter, "is not in there");
+        alphabetCopy[letter] = "dark-gray";
         // increase index
         setGuessIndex(guessIndex + 1);
       }

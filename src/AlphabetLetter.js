@@ -15,6 +15,12 @@ const AlphabetLetter = ({letter, tableOfLetters, handleChooseLetter, allowChoice
         } else {
           return 'Yellow Disabled';
         }
+      case 'dark-gray':
+        if (allowChoice) {
+          return 'Dark-Gray'
+        } else {
+          return 'Dark-Gray Disabled';
+        }
       default:
         if (allowChoice) {
           return '';
