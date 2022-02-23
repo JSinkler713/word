@@ -90,7 +90,7 @@ ul {
   border: 2px solid orange;
 }
 .Green {
-  background: green;
+  background-color: #42ad0e;
   color: black;
 }
 a {
@@ -98,7 +98,7 @@ a {
   color: white;
 }
 .Yellow {
-  background: yellow;
+  background-color: #e5d02a;
   color: black;
 }
 .Dark-Gray {
