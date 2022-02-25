@@ -295,11 +295,11 @@ function Home() {
 
   useEffect(() => {
     let timer;
+    setCurrentChoice([]);
     if (showGuess) {
       timer = setTimeout(() => {
         setShowGuess(false);
-        setCurrentChoice([]);
-      }, 3000);
+      }, isWord ? 5000 : 2000);
     }
     return () => {
       clearTimeout(timer);
@@ -312,7 +312,6 @@ function Home() {
     setChoiceCopy(currentChoice.join(""));
     console.log("checking is word");
     let returnValue = await checkIsWord(currentChoice.join(""));
-    console.log(returnValue);
     setMeaning(returnValue.meaning);
     setIsWord(returnValue.isWord);
     setShowGuess(true);
@@ -364,7 +363,7 @@ function Home() {
   return (
     <div className="App">
       <ShowMeaning
-        word={currentChoice}
+        word={choiceCopy}
         isWord={isWord}
         meaning={meaning}
         showGuess={showGuess}
