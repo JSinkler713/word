@@ -4,7 +4,12 @@ const NewComp = ({ word, isWord, meaning, showGuess })=> {
   let meaningShortened
   if (!showGuess) return null
   if (meaning.length > 20) {
-    meaningShortened = meaning.slice(0, 32)
+    let meaningArr = meaning.split('.')
+    meaningShortened = meaningArr[0]+meaningArr[1]
+   // meaningShortened = meaning.slice(0, 32)
+    if (meaningShortened.length > 100) {
+      meaningShortened = meaning.slice(0, 100)
+    }
     meaningShortened += '...'
   } else {
     meaningShortened = meaning
@@ -12,10 +17,10 @@ const NewComp = ({ word, isWord, meaning, showGuess })=> {
   return ( 
      <div className='ShowMeaning'> 
        <h2>
-       {word} is a {isWord ? 'great guess' : 'a a uhh. not a word'}.
+       {word} is {isWord ? 'a great guess' : 'not a word.'}.
        </h2>
        <p>
-       {isWord ? meaningShortened : 'guess better next time'}
+       {isWord ? meaningShortened : 'guess better next time 😮'}
        </p>
     </div>  ) 
 } 
