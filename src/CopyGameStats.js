@@ -29,21 +29,23 @@ const CopyGameStats = ({ allGuesses, simpleWord, hash }) => {
   console.log("copy game stats");
   console.log(values);
   const handleCopy = () => {
-    let canShare = navigator.canShare({
-        url: `${deployedURL}/?${hash}`,
-        text: `\n${values}`,
-        title: 'Stats:'
-      })
-    if (!canShare) {
+    try {
+      if (navigator.canShare({
+          url: `${deployedURL}/?${hash}`,
+          text: `\n${values}`,
+          title: 'Stats:'
+        })) {
+        console.log('in the navigator share block')
+        navigator.share({
+          url: `${deployedURL}/?${hash}`,
+          text: `\n${values}`,
+          title: 'Stats:'
+        }) 
+      } 
+    } catch(e) {
       console.log('in the navigator clipboard block')
-      navigator.clipboard.writeText(`${deployedURL}/?${hash} \n${values}`)
-    } else {
-      console.log('in the navigator share block')
-      navigator.share({
-        url: `${deployedURL}/?${hash}`,
-        text: `\n${values}`,
-        title: 'Stats:'
-      }) 
+      // give a pop-up that says copied to clipboard
+      navigator.clipboard.writeText(`Stats:\n${values}\n${deployedURL}/?${hash}`)
     }
   };
 
