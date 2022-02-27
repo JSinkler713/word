@@ -6,6 +6,7 @@ import AlphabetLetter from "./AlphabetLetter";
 import { hashWordUtil, unHashUtil } from "./hashWordUtil";
 import ShowMeaning from "./ShowMeaning";
 import Share from "./Share";
+import CopyGameStats from "./CopyGameStats";
 const apiUrl = process.env.REACT_APP_API_BASE || "http://localhost:4000";
 
 function Home() {
@@ -267,6 +268,7 @@ function Home() {
     setAllGuesses(allGuessesCopy);
     setGuessCol(guessCol + 1);
   }
+
   function handleDelete() {
     // get last value
     const allGuessesCopy = [...allGuesses];
@@ -387,8 +389,8 @@ function Home() {
               >
                 {simpleWord}
               </a>
+              {isDone ? <div className='Shares'> <Share hash={hashed} /> <CopyGameStats simpleWord={simpleWord} allGuesses={allGuesses} /> </div>: null}
               <button className='Reset' onClick={reset}>Reset</button>
-      {isDone ? <Share hash={hashed} /> : null}
             </>
           )}
         </div>

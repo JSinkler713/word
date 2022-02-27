@@ -109,6 +109,11 @@ a {
   height: 40vmin;
   pointer-events: none;
 }
+.Shares {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

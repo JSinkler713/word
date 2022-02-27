@@ -14,7 +14,7 @@ const Share = ({hash})=> {
         <button
     onClick={handleCopy}
 >
-  Or Share
+  Share
 </button>
     </div>
 
