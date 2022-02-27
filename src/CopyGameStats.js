@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
+const deployedURL = process.env.REACT_APP_DEPLOYED_URL || "http://localhost:3000";
 
-const CopyGameStats = ({ allGuesses, simpleWord }) => {
+const CopyGameStats = ({ allGuesses, simpleWord, hash }) => {
   function makeSquares(allGuesses, simpleWord) {
     let totalSentence = "";
     for (let i = 0; i < allGuesses.length; i++) {
@@ -28,12 +29,12 @@ const CopyGameStats = ({ allGuesses, simpleWord }) => {
   console.log("copy game stats");
   console.log(values);
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${values}`);
+    navigator.clipboard.writeText(`${deployedURL}/?${hash} \n${values}`)
   };
 
   return (
     <div>
-      <button onClick={handleCopy}>Share Stats!</button>
+      <button onClick={handleCopy}>Share w/ Stats!</button>
     </div>
   );
 };

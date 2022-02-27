@@ -389,7 +389,7 @@ function Home() {
               >
                 {simpleWord}
               </a>
-              {isDone ? <div className='Shares'> <Share hash={hashed} /> <CopyGameStats simpleWord={simpleWord} allGuesses={allGuesses} /> </div>: null}
+              {isDone ? <div className='Shares'> <CopyGameStats hash={hashed} simpleWord={simpleWord} allGuesses={allGuesses} /> </div>: null}
               <button className='Reset' onClick={reset}>Reset</button>
             </>
           )}
