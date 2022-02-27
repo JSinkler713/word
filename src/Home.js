@@ -345,6 +345,7 @@ function Home() {
     if (countCorrect === 5) {
       console.log("correct guess");
       console.log("game over");
+      setIsDone(true);
       setGuessIndex(guessIndex + 1);
       setShowLink(true);
     } else {
