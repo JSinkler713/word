@@ -31,8 +31,8 @@ const CopyGameStats = ({ allGuesses, simpleWord, hash }) => {
   const handleCopy = () => {
     let canShare = navigator.canShare({
         url: `${deployedURL}/?${hash}`,
-        text: `Stats: \n${values}`,
-        title: 'wordl stats'
+        text: `\n${values}`,
+        title: 'Stats:'
       })
     if (!canShare) {
       console.log('in the navigator clipboard block')
@@ -41,8 +41,8 @@ const CopyGameStats = ({ allGuesses, simpleWord, hash }) => {
       console.log('in the navigator share block')
       navigator.share({
         url: `${deployedURL}/?${hash}`,
-        text: `Stats: \n${values}`,
-        title: 'wordl stats'
+        text: `\n${values}`,
+        title: 'Stats:'
       }) 
     }
   };
