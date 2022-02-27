@@ -29,7 +29,22 @@ const CopyGameStats = ({ allGuesses, simpleWord, hash }) => {
   console.log("copy game stats");
   console.log(values);
   const handleCopy = () => {
-    navigator.clipboard.writeText(`${deployedURL}/?${hash} \n${values}`)
+    let canShare = navigator.canShare({
+        url: `${deployedURL}/?${hash}`,
+        text: `Stats: \n${values}`,
+        title: 'wordl stats'
+      })
+    if (!canShare) {
+      console.log('in the navigator clipboard block')
+      navigator.clipboard.writeText(`${deployedURL}/?${hash} \n${values}`)
+    } else {
+      console.log('in the navigator share block')
+      navigator.share({
+        url: `${deployedURL}/?${hash}`,
+        text: `Stats: \n${values}`,
+        title: 'wordl stats'
+      }) 
+    }
   };
 
   return (
