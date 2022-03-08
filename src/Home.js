@@ -108,7 +108,10 @@ function Home() {
             setAlphabetHasBeenGuessed(alphabetDictionary);
             setSimpleWord(res.word);
             setHashed(hashWordUtil(res.word));
-          });
+          })
+          .catch((reason) => {
+            console.log('reason', reason)
+          })
       }
       fetchWord();
     }
@@ -284,15 +287,19 @@ function Home() {
     }
   }
   async function checkIsWord(word) {
-    let result = await fetch(apiUrl + "/check-is-word", {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ word: word }),
-    });
-    result = await result.json();
-    return result;
+    try {
+      let result = await fetch(apiUrl + "/check-is-word", {
+        method: "POST", // or 'PUT'
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ word: word }),
+      });
+      result = await result.json();
+      return result;
+    } catch (e) {
+      console.log('exception', e)
+    }
   }
 
   useEffect(() => {
@@ -309,54 +316,58 @@ function Home() {
   }, [showGuess]);
 
   async function handleChooseWord() {
-    console.log("handling the choice");
-    let countCorrect = 0;
-    setChoiceCopy(currentChoice.join(""));
-    console.log("checking is word");
-    let returnValue = await checkIsWord(currentChoice.join(""));
-    setMeaning(returnValue.meaning);
-    setIsWord(returnValue.isWord);
-    setShowGuess(true);
-    currentChoice.forEach((letter, index) => {
-      let alphabetCopy = alphabetHasBeenGuessed;
-      if (randomWord[letter] && randomWord[letter].includes(index)) {
-        console.log("got it spot on ,", letter, "at index ", index);
-        // if spot on need to update alphabet to green at that letter
-        alphabetCopy[letter] = "green";
-        setAlphabetHasBeenGuessed(alphabetCopy);
-        countCorrect++;
-      } else if (randomWord[letter]) {
-        // if in dictionary but wrong spot need to update alphabet to yellow at that letter
-        console.log("in a letter chosen");
-        if (setAlphabetHasBeenGuessed[letter] !== "green") {
-          alphabetCopy[letter] = "yellow";
-          console.log("alphabetCopy", alphabetCopy);
-          console.log("setting to yellow");
+    try {
+      console.log("handling the choice");
+      let countCorrect = 0;
+      setChoiceCopy(currentChoice.join(""));
+      console.log("checking is word");
+      let returnValue = await checkIsWord(currentChoice.join(""));
+      setMeaning(returnValue.meaning);
+      setIsWord(returnValue.isWord);
+      setShowGuess(true);
+      currentChoice.forEach((letter, index) => {
+        let alphabetCopy = alphabetHasBeenGuessed;
+        if (randomWord[letter] && randomWord[letter].includes(index)) {
+          console.log("got it spot on ,", letter, "at index ", index);
+          // if spot on need to update alphabet to green at that letter
+          alphabetCopy[letter] = "green";
           setAlphabetHasBeenGuessed(alphabetCopy);
+          countCorrect++;
+        } else if (randomWord[letter]) {
+          // if in dictionary but wrong spot need to update alphabet to yellow at that letter
+          console.log("in a letter chosen");
+          if (setAlphabetHasBeenGuessed[letter] !== "green") {
+            alphabetCopy[letter] = "yellow";
+            console.log("alphabetCopy", alphabetCopy);
+            console.log("setting to yellow");
+            setAlphabetHasBeenGuessed(alphabetCopy);
+          }
+          console.log("yes ", letter, " is in there but in the wrong spot");
+        } else {
+          console.log("nope ", letter, "is not in there");
+          alphabetCopy[letter] = "dark-gray";
+          // increase index
+          setGuessIndex(guessIndex + 1);
         }
-        console.log("yes ", letter, " is in there but in the wrong spot");
-      } else {
-        console.log("nope ", letter, "is not in there");
-        alphabetCopy[letter] = "dark-gray";
-        // increase index
-        setGuessIndex(guessIndex + 1);
-      }
-    });
-    setGuessCol(0);
+      });
+      setGuessCol(0);
 
-    if (countCorrect === 5) {
-      console.log("correct guess");
-      console.log("game over");
-      setIsDone(true);
-      setGuessIndex(guessIndex + 1);
-      setShowLink(true);
-    } else {
-      console.log("not guessed right yet");
-      // set this row of choices, move to next row
-      if (guessIndex === 4) {
+      if (countCorrect === 5) {
+        console.log("correct guess");
         console.log("game over");
+        setIsDone(true);
+        setGuessIndex(guessIndex + 1);
         setShowLink(true);
+      } else {
+        console.log("not guessed right yet");
+        // set this row of choices, move to next row
+        if (guessIndex === 4) {
+          console.log("game over");
+          setShowLink(true);
+        }
       }
+    } catch (e) {
+      console.log('exception, ', e)
     }
   }
 
