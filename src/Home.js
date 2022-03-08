@@ -5,7 +5,6 @@ import LetterBox from "./LetterBox";
 import AlphabetLetter from "./AlphabetLetter";
 import { hashWordUtil, unHashUtil } from "./hashWordUtil";
 import ShowMeaning from "./ShowMeaning";
-import Share from "./Share";
 import CopyGameStats from "./CopyGameStats";
 const apiUrl = process.env.REACT_APP_API_BASE || "http://localhost:4000";
 
@@ -273,10 +272,7 @@ function Home() {
   }
 
   function handleDelete() {
-    // get last value
     const allGuessesCopy = [...allGuesses];
-    // need to make sure we have done a guess
-    // need to resetCurrentChoice to remove last guess
     const currentChoiceCopy = [...currentChoice];
     if (guessCol - 1 >= 0) {
       allGuessesCopy[guessIndex][guessCol-1] = '' // reset last choice to ''
@@ -289,7 +285,7 @@ function Home() {
   async function checkIsWord(word) {
     try {
       let result = await fetch(apiUrl + "/check-is-word", {
-        method: "POST", // or 'PUT'
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -304,11 +300,12 @@ function Home() {
 
   useEffect(() => {
     let timer;
-    setCurrentChoice([]);
     if (showGuess) {
       timer = setTimeout(() => {
         setShowGuess(false);
       }, isWord ? 5000 : 2000);
+    } else {
+      setCurrentChoice([])
     }
     return () => {
       clearTimeout(timer);
@@ -329,12 +326,10 @@ function Home() {
         let alphabetCopy = alphabetHasBeenGuessed;
         if (randomWord[letter] && randomWord[letter].includes(index)) {
           console.log("got it spot on ,", letter, "at index ", index);
-          // if spot on need to update alphabet to green at that letter
           alphabetCopy[letter] = "green";
           setAlphabetHasBeenGuessed(alphabetCopy);
           countCorrect++;
         } else if (randomWord[letter]) {
-          // if in dictionary but wrong spot need to update alphabet to yellow at that letter
           console.log("in a letter chosen");
           if (setAlphabetHasBeenGuessed[letter] !== "green") {
             alphabetCopy[letter] = "yellow";
@@ -360,7 +355,6 @@ function Home() {
         setShowLink(true);
       } else {
         console.log("not guessed right yet");
-        // set this row of choices, move to next row
         if (guessIndex === 4) {
           console.log("game over");
           setShowLink(true);
